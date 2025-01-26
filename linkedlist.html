@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linked List Operations</title>
+    <style>
+        :root {
+            --primary: #00FFC6;
+            --secondary: #7C4DFF;
+            --accent: #FF1CF7;
+            --background: #0A0A17;
+            --surface: #131326;
+            --surface-2: #1E1E38;
+            --error: #FF4B6E;
+            --success: #00FFC6;
+            --text: #E0E0FF;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, var(--background), #0F0F23);
+            color: var(--text);
+            margin: 0;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px rgba(0, 255, 198, 0.3);
+        }
+
+        .operations {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .operation {
+            background: linear-gradient(145deg, var(--surface), var(--surface-2));
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .operation:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4),
+                        0 0 20px rgba(0, 255, 198, 0.1);
+            border-color: var(--primary);
+        }
+
+        h3 {
+            color: var(--text);
+            margin-bottom: 20px;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        button {
+            background: var(--surface-2);
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            color: var(--primary);
+            cursor: pointer;
+            padding: 12px 24px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(0, 255, 198, 0.1),
+                transparent
+            );
+            transform: rotate(45deg);
+            transition: all 0.3s ease;
+            opacity: 0;
+        }
+
+        button:hover {
+            background: var(--surface);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3),
+                        0 0 20px rgba(0, 255, 198, 0.2);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        button:hover::after {
+            opacity: 1;
+            transform: rotate(45deg) translateY(-50%);
+        }
+
+        #output {
+            margin-top: 40px;
+            padding: 30px;
+            background: linear-gradient(145deg, var(--surface), var(--surface-2));
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: auto;
+            min-height: 200px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .node {
+            display: inline-block;
+            padding: 15px;
+            margin: 8px 40px 8px 8px; /* Increased right margin to 40px */
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3),
+                        0 0 20px rgba(124, 77, 255, 0.3);
+            position: relative;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .node:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4),
+                        0 0 30px rgba(124, 77, 255, 0.4);
+        }
+
+        .node .data {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .node .address {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.9);
+            background: rgba(0, 0, 0, 0.2);
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: block;
+            margin-top: 8px;
+        }
+
+        .node.head {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .null {
+            display: inline-block;
+            padding: 15px 25px;
+            margin: 8px;
+            background: linear-gradient(135deg, var(--error), var(--accent));
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            font-weight: 600;
+        }
+
+        svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        line {
+            stroke: var(--primary);
+            stroke-width: 2;
+            stroke-dasharray: 5, 5;
+            marker-end: url(#arrow);
+            animation: flowLine 1s linear infinite;
+        }
+
+        @keyframes flowLine {
+            to {
+                stroke-dashoffset: -10;
+            }
+        }
+
+        marker {
+            fill: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Linked List Operations</h1>
+        <div class="operations">
+            <div class="operation">
+                <h3>Create List</h3>
+                <button onclick="createList()">Create</button>
+            </div>
+            <div class="operation">
+                <h3>Insert at End</h3>
+                <button onclick="insertAtEnd()">Insert</button>
+            </div>
+            <div class="operation">
+                <h3>Insert at Beginning</h3>
+                <button onclick="insertAtBeginning()">Insert</button>
+            </div>
+            <div class="operation">
+                <h3>Insert at Position</h3>
+                <button onclick="insertAtPosition()">Insert</button>
+            </div>
+            <div class="operation">
+                <h3>Delete Node</h3>
+                <button onclick="deleteNode()">Delete</button>
+            </div>
+            <div class="operation">
+                <h3>Search Node</h3>
+                <button onclick="searchNode()">Search</button>
+            </div>
+            <div class="operation">
+                <h3>Display List</h3>
+                <button onclick="displayList()">Display</button>
+            </div>
+        </div>
+
+        <div id="output">
+            <svg id="connector-lines">
+                <defs>
+                    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+                        <path d="M0,0 L10,5 L0,10 L2,5 Z"></path>
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+    </div>
+
+    <script>
+        class Node {
+            constructor(data) {
+                this.data = data;
+                this.next = null;
+                this.address = Math.random().toString(16).slice(2, 10).toUpperCase();
+            }
+        }
+
+        class LinkedList {
+            constructor() {
+                this.head = null;
+            }
+
+            create(dataArray) {
+                this.head = null;
+                dataArray.forEach(data => this.insertAtEnd(data));
+            }
+
+            insertAtEnd(data) {
+                const newNode = new Node(data);
+                if (!this.head) {
+                    this.head = newNode;
+                } else {
+                    let temp = this.head;
+                    while (temp.next) {
+                        temp = temp.next;
+                    }
+                    temp.next = newNode;
+                }
+            }
+
+            insertAtBeginning(data) {
+                const newNode = new Node(data);
+                newNode.next = this.head;
+                this.head = newNode;
+            }
+
+            insertAtPosition(data, position) {
+                const newNode = new Node(data);
+                if (position === 0) {
+                    this.insertAtBeginning(data);
+                    return;
+                }
+                let temp = this.head;
+                let count = 0;
+                while (temp && count < position - 1) {
+                    temp = temp.next;
+                    count++;
+                }
+                if (temp) {
+                    newNode.next = temp.next;
+                    temp.next = newNode;
+                } else {
+                    alert("Position out of bounds");
+                }
+            }
+
+            deleteNode(data) {
+                if (!this.head) return;
+                if (this.head.data === data) {
+                    this.head = this.head.next;
+                    return;
+                }
+                let temp = this.head;
+                while (temp.next && temp.next.data !== data) {
+                    temp = temp.next;
+                }
+                if (temp.next) {
+                    temp.next = temp.next.next;
+                }
+            }
+
+            search(data) {
+                let temp = this.head;
+                while (temp) {
+                    if (temp.data === data) {
+                        alert(`Data found: ${data}, Address: ${temp.address}`);
+                        return true;
+                    }
+                    temp = temp.next;
+                }
+                alert("Data not found");
+                return false;
+            }
+
+            display() {
+                const outputDiv = document.getElementById('output');
+                const svg = document.getElementById('connector-lines');
+                svg.innerHTML = '<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 L2,5 Z"></path></marker></defs>';
+                outputDiv.innerHTML = '';
+                outputDiv.appendChild(svg);
+
+                let temp = this.head;
+                const nodes = [];
+
+                while (temp) {
+                    const nodeDiv = document.createElement('div');
+                    nodeDiv.className = temp === this.head ? 'node head' : 'node';
+                    nodeDiv.innerHTML = `<span class="data">${temp.data}</span><span class="address">0x${temp.address}</span>`;
+                    outputDiv.appendChild(nodeDiv);
+                    nodes.push(nodeDiv);
+                    temp = temp.next;
+                }
+
+                const nullNode = document.createElement('div');
+                nullNode.className = 'null';
+                nullNode.innerText = 'NULL';
+                outputDiv.appendChild(nullNode);
+                nodes.push(nullNode);
+
+                setTimeout(() => {
+                    for (let i = 0; i < nodes.length - 1; i++) {
+                        const rect1 = nodes[i].getBoundingClientRect();
+                        const rect2 = nodes[i + 1].getBoundingClientRect();
+                        const outputRect = outputDiv.getBoundingClientRect();
+
+                        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                        line.setAttribute('x1', rect1.right - outputRect.left);
+                        line.setAttribute('y1', rect1.top + rect1.height/2 - outputRect.top);
+                        line.setAttribute('x2', rect2.left - outputRect.left);
+                        line.setAttribute('y2', rect2.top + rect2.height/2 - outputRect.top);
+
+                        svg.appendChild(line);
+                    }
+                }, 0);
+            }
+        }
+
+        const linkedList = new LinkedList();
+
+        function createList() {
+            const data = prompt("Enter elements separated by commas");
+            if (data) {
+                linkedList.create(data.split(',').map(item => item.trim()));
+                linkedList.display();
+            }
+        }
+
+        function insertAtEnd() {
+            const data = prompt("Enter the element to insert at the end");
+            if (data) {
+                linkedList.insertAtEnd(data);
+                linkedList.display();
+            }
+        }
+
+        function insertAtBeginning() {
+            const data = prompt("Enter the element to insert at the beginning");
+            if (data) {
+                linkedList.insertAtBeginning(data);
+                linkedList.display();
+            }
+        }
+
+        function insertAtPosition() {
+            const data = prompt("Enter the element to insert");
+            const position = parseInt(prompt("Enter the position (0-based index)"));
+            if (data && !isNaN(position)) {
+                linkedList.insertAtPosition(data, position);
+                linkedList.display();
+            }
+        }
+
+        function deleteNode() {
+            const data = prompt("Enter the element to delete");
+            if (data) {
+                linkedList.deleteNode(data);
+                linkedList.display();
+            }
+        }
+
+        function searchNode() {
+            const data = prompt("Enter the element to search");
+            if (data) {
+                linkedList.search(data);
+            }
+        }
+
+        function displayList() {
+            linkedList.display();
+        }
+    </script>
+</body>
+</html>

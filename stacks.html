@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CD Stack Operations</title>
+    <style>
+        :root {
+            /* Modern neon-inspired palette */
+            --primary: #00FFC6;
+            --primary-dark: #00D1A3;
+            --secondary: #7C4DFF;
+            --accent: #FF1CF7;
+            --background: #0A0A17;
+            --surface: #131326;
+            --surface-2: #1E1E38;
+            --error: #FF4B6E;
+            --success: #00FFC6;
+            --on-primary: #0A0A17;
+            --on-secondary: #FFFFFF;
+            --on-background: #E0E0FF;
+            --on-surface: #E0E0FF;
+            --on-error: #FFFFFF;
+            --elevation-1: rgba(224, 224, 255, 0.05);
+            --elevation-2: rgba(224, 224, 255, 0.08);
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, var(--background), #0F0F23);
+            margin: 0;
+            padding: 2rem;
+            color: var(--on-background);
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin: 0;
+            font-weight: 300;
+            text-align: center;
+            text-shadow: 0 0 20px rgba(0, 255, 198, 0.3);
+        }
+
+        .stack-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            width: 300px;
+            height: 500px;
+            border: 2px solid var(--primary);
+            border-radius: 16px;
+            background: linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3),
+                        0 0 40px rgba(0, 255, 198, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stack-container:hover {
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4),
+                        0 0 60px rgba(0, 255, 198, 0.15);
+            border-color: var(--accent);
+        }
+
+        .cd {
+            width: 280px;
+            height: 30px;
+            margin: 5px 0;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            color: var(--on-secondary);
+            text-align: center;
+            line-height: 30px;
+            border-radius: 15px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3),
+                        0 0 15px rgba(124, 77, 255, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cd::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            animation: shine 2s infinite;
+        }
+
+        @keyframes shine {
+            to {
+                left: 100%;
+            }
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .controls button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            background: var(--surface-2);
+            color: var(--primary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .controls button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(0, 255, 198, 0.1),
+                transparent
+            );
+            transform: rotate(45deg);
+            transition: all 0.3s ease;
+            opacity: 0;
+        }
+
+        .controls button:hover {
+            background: var(--surface);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3),
+                        0 0 20px rgba(0, 255, 198, 0.2);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .controls button:hover::after {
+            opacity: 1;
+            transform: rotate(45deg) translateY(-50%);
+        }
+
+        .controls button:active {
+            transform: translateY(0);
+            background-color: var(--elevation-1);
+        }
+
+        .message {
+            min-height: 24px;
+            color: var(--error);
+            font-weight: 500;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            text-shadow: 0 0 10px rgba(255, 75, 110, 0.3);
+        }
+
+        .message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOutDown {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.3s ease forwards;
+        }
+
+        .fade-out {
+            animation: fadeOutDown 0.3s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CD Stack Operations</h1>
+        <div class="stack-container" id="stackContainer"></div>
+
+        <div class="controls">
+            <button onclick="pushCD()">Push CD</button>
+            <button onclick="popCD()">Pop CD</button>
+            <button onclick="peekCD()">Peek CD</button>
+        </div>
+
+        <div class="message" id="message"></div>
+    </div>
+
+    <script>
+        const stackContainer = document.getElementById('stackContainer');
+        const messageEl = document.getElementById('message');
+        let stack = [];
+
+        function showMessage(text, isError = true) {
+            messageEl.textContent = text;
+            messageEl.classList.add('show');
+            messageEl.style.color = isError ? 'var(--error)' : 'var(--success)';
+            messageEl.style.textShadow = isError 
+                ? '0 0 10px rgba(255, 75, 110, 0.3)'
+                : '0 0 10px rgba(0, 255, 198, 0.3)';
+            setTimeout(() => {
+                messageEl.classList.remove('show');
+            }, 3000);
+        }
+
+        function pushCD() {
+            if (stack.length >= 15) {
+                showMessage('Stack Overflow! Maximum capacity reached.');
+                return;
+            }
+
+            const value = prompt('Enter CD label:');
+            if (value) {
+                const cd = document.createElement('div');
+                cd.className = 'cd fade-in';
+                cd.textContent = value;
+                stack.push(value);
+                stackContainer.insertBefore(cd, stackContainer.firstChild);
+                showMessage(`Added CD: ${value}`, false);
+            }
+        }
+
+        function popCD() {
+            if (stack.length === 0) {
+                showMessage('Stack Underflow! The stack is empty.');
+                return;
+            }
+
+            const topCD = stackContainer.firstChild;
+            topCD.classList.remove('fade-in');
+            topCD.classList.add('fade-out');
+            
+            setTimeout(() => {
+                stack.pop();
+                stackContainer.removeChild(topCD);
+                showMessage('CD removed successfully', false);
+            }, 300);
+        }
+
+        function peekCD() {
+            if (stack.length === 0) {
+                showMessage('Stack is empty!');
+                return;
+            }
+            showMessage(`Top CD: ${stack[stack.length - 1]}`, false);
+        }
+    </script>
+</body>
+</html>

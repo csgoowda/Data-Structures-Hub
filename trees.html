@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Binary searchs Tree Explorer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1033, #2d1b4e);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tree-card {
+            background: linear-gradient(145deg, rgba(41, 31, 71, 0.9), rgba(69, 41, 119, 0.9));
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .title {
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+            background: -webkit-linear-gradient(45deg, #f72585, #4cc9f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(247, 37, 133, 0.5);
+        }
+
+        .tree-container {
+            height: 400px;
+            position: relative;
+            margin: 20px 0;
+            background: rgba(25, 18, 43, 0.7);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 0 30px rgba(76, 201, 240, 0.1);
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: linear-gradient(45deg, #f72585, #4cc9f0);
+            box-shadow: 0 4px 15px rgba(247, 37, 133, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(247, 37, 133, 0.4);
+        }
+
+        .node {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, #7209b7, #4cc9f0);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 0 0 20px rgba(76, 201, 240, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            transform: translate(-25px, -25px); /* Center the node */
+        }
+
+        .node:hover {
+            transform: translate(-25px, -25px) scale(1.1);
+            box-shadow: 0 0 30px rgba(76, 201, 240, 0.8);
+        }
+
+        .edge {
+            position: absolute;
+            height: 3px;
+            background: linear-gradient(90deg, #7209b7, #4cc9f0);
+            transform-origin: left center;
+            box-shadow: 0 0 10px rgba(76, 201, 240, 0.3);
+        }
+
+        .traversal-result {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(25, 18, 43, 0.7);
+            border-radius: 10px;
+            font-family: monospace;
+            color: #4cc9f0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        #status {
+            margin-top: 15px;
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px;
+            background: rgba(25, 18, 43, 0.7);
+            color: #f72585;
+            font-weight: bold;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            background: rgba(25, 18, 43, 0.7);
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #4cc9f0;
+            box-shadow: 0 0 15px rgba(76, 201, 240, 0.3);
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="tree-card">
+            <h2 class="title">🌳 Binary search Tree Explorer</h2>
+            
+            <div class="input-group">
+                <input type="number" id="nodeInput" placeholder="Enter number">
+                <button onclick="insertNode()">Insert Node</button>
+            </div>
+            
+            <div class="tree-container" id="treeContainer"></div>
+            
+            <div class="controls">
+                <button onclick="traverse('inorder')">Inorder</button>
+                <button onclick="traverse('preorder')">Preorder</button>
+                <button onclick="traverse('postorder')">Postorder</button>
+                <button onclick="searchNode()">Search</button>
+            </div>
+            
+            <div class="traversal-result" id="traversalResult"></div>
+            <div id="status"></div>
+        </div>
+    </div>
+
+    <script>
+        class Node {
+            constructor(value) {
+                this.value = value;
+                this.left = null;
+                this.right = null;
+            }
+        }
+
+        class BST {
+            constructor() {
+                this.root = null;
+            }
+
+            insert(value) {
+                const newNode = new Node(value);
+
+                if (!this.root) {
+                    this.root = newNode;
+                    return true;
+                }
+
+                let current = this.root;
+                while (true) {
+                    if (value === current.value) return false;
+                    if (value < current.value) {
+                        if (!current.left) {
+                            current.left = newNode;
+                            return true;
+                        }
+                        current = current.left;
+                    } else {
+                        if (!current.right) {
+                            current.right = newNode;
+                            return true;
+                        }
+                        current = current.right;
+                    }
+                }
+            }
+
+            search(value) {
+                let current = this.root;
+                while (current) {
+                    if (value === current.value) return true;
+                    if (value < current.value) {
+                        current = current.left;
+                    } else {
+                        current = current.right;
+                    }
+                }
+                return false;
+            }
+
+            inorder(node = this.root, result = []) {
+                if (node) {
+                    this.inorder(node.left, result);
+                    result.push(node.value);
+                    this.inorder(node.right, result);
+                }
+                return result;
+            }
+
+            preorder(node = this.root, result = []) {
+                if (node) {
+                    result.push(node.value);
+                    this.preorder(node.left, result);
+                    this.preorder(node.right, result);
+                }
+                return result;
+            }
+
+            postorder(node = this.root, result = []) {
+                if (node) {
+                    this.postorder(node.left, result);
+                    this.postorder(node.right, result);
+                    result.push(node.value);
+                }
+                return result;
+            }
+        }
+
+        const bst = new BST();
+        let nodePositions = new Map();
+
+        function calculateNodePosition(node, level = 0, position = 0, maxWidth = 800, maxHeight = 400) {
+            if (!node) return;
+
+            const x = position * (maxWidth / Math.pow(2, level)) + (maxWidth / Math.pow(2, level + 1));
+            const y = level * 80 + 40;
+
+            nodePositions.set(node, { x, y });
+
+            calculateNodePosition(node.left, level + 1, position * 2, maxWidth, maxHeight);
+            calculateNodePosition(node.right, level + 1, position * 2 + 1, maxWidth, maxHeight);
+        }
+
+        function drawTree() {
+            const container = document.getElementById('treeContainer');
+            container.innerHTML = '';
+            nodePositions.clear();
+
+            if (!bst.root) return;
+
+            calculateNodePosition(bst.root);
+
+            // Draw edges first
+            nodePositions.forEach((pos, node) => {
+                if (node.left) {
+                    const childPos = nodePositions.get(node.left);
+                    drawEdge(container, pos, childPos);
+                }
+                if (node.right) {
+                    const childPos = nodePositions.get(node.right);
+                    drawEdge(container, pos, childPos);
+                }
+            });
+
+            // Draw nodes
+            nodePositions.forEach((pos, node) => {
+                const nodeElement = document.createElement('div');
+                nodeElement.className = 'node';
+                nodeElement.textContent = node.value;
+                nodeElement.style.left = `${pos.x}px`;
+                nodeElement.style.top = `${pos.y}px`;
+                container.appendChild(nodeElement);
+
+                gsap.from(nodeElement, {
+                    scale: 0,
+                    opacity: 0,
+                    duration: 0.5,
+                    ease: "back.out(1.7)"
+                });
+            });
+        }
+
+        function drawEdge(container, start, end) {
+            const edge = document.createElement('div');
+            edge.className = 'edge';
+            
+            const length = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2));
+            const angle = Math.atan2(end.y - start.y, end.x - start.x) * 180 / Math.PI;
+
+            edge.style.width = `${length}px`;
+            edge.style.left = `${start.x}px`;
+            edge.style.top = `${start.y}px`;
+            edge.style.transform = `rotate(${angle}deg)`;
+
+            container.appendChild(edge);
+
+            gsap.from(edge, {
+                scaleX: 0,
+                opacity: 0,
+                duration: 0.5,
+                ease: "power2.out"
+            });
+        }
+
+        function insertNode() {
+            const input = document.getElementById('nodeInput');
+            const value = parseInt(input.value);
+            
+            if (isNaN(value)) {
+                document.getElementById('status').textContent = 'Please enter a valid number';
+                return;
+            }
+
+            if (bst.insert(value)) {
+                drawTree();
+                document.getElementById('status').textContent = `Inserted ${value} into the tree`;
+            } else {
+                document.getElementById('status').textContent = `${value} already exists in the tree`;
+            }
+            
+            input.value = '';
+        }
+
+        function searchNode() {
+            const input = document.getElementById('nodeInput');
+            const value = parseInt(input.value);
+            
+            if (isNaN(value)) {
+                document.getElementById('status').textContent = 'Please enter a valid number';
+                return;
+            }
+
+            if (bst.search(value)) {
+                document.getElementById('status').textContent = `Found ${value} in the tree`;
+            } else {
+                document.getElementById('status').textContent = `${value} not found in the tree`;
+            }
+        }
+
+        function traverse(type) {
+            let result;
+            switch(type) {
+                case 'inorder':
+                    result = bst.inorder();
+                    break;
+                case 'preorder':
+                    result = bst.preorder();
+                    break;
+                case 'postorder':
+                    result = bst.postorder();
+                    break;
+            }
+            
+            document.getElementById('traversalResult').textContent = 
+                `${type.toUpperCase()}: [${result.join(' → ')}]`;
+        }
+
+        // Add event listener for Enter key
+        document.getElementById('nodeInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                insertNode();
+            }
+        });
+    </script>
+</body>
+</html>

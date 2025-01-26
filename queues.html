@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quantum Queue Systems</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: #0a0a1a;
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+        }
+
+        .queue-card {
+            background: linear-gradient(145deg, #1a1a3a, #2a2a5a);
+            border-radius: 20px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .scene-container {
+            height: 300px;
+            position: relative;
+            margin: 20px 0;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .dna-container {
+            position: absolute;
+            right: 50px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100px;
+            height: 200px;
+        }
+
+        .circular-container {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .queue-item {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            transition: all 0.5s ease;
+        }
+
+        .dna-sequence {
+            background: linear-gradient(45deg, #00ff9d, #00ccff);
+            box-shadow: 0 0 15px #00ff9d;
+            left: 20px;
+        }
+
+        .time-traveler {
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            box-shadow: 0 0 15px #ff00ff;
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+        }
+
+        .quantum-effect {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid #ff00ff;
+            animation: quantumPulse 2s infinite;
+        }
+
+        @keyframes quantumPulse {
+            0% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 0; }
+            100% { transform: scale(1); opacity: 0.5; }
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .dna-btn {
+            background: linear-gradient(45deg, #00ff9d, #00ccff);
+        }
+
+        .time-btn {
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.2);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .dna-stat {
+            color: #00ff9d;
+        }
+
+        .time-stat {
+            color: #ff00ff;
+        }
+
+        .status {
+            margin-top: 15px;
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+            background: -webkit-linear-gradient(45deg, #00ff9d, #00ccff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .time-title {
+            background: -webkit-linear-gradient(45deg, #ff00ff, #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- DNA Lab Queue (Simple Queue) -->
+        <div class="queue-card">
+            <h2 class="title">🧬 DNA Sequencing Lab</h2>
+            <div class="scene-container">
+                <div id="dnaQueue"></div>
+            </div>
+            <div class="controls">
+                <button class="dna-btn" onclick="addSequence()">Add Sequence</button>
+                <button class="dna-btn" onclick="processSequence()">Process Sample</button>
+            </div>
+            <div class="stats">
+                <div class="stat">
+                    <span>Pending</span>
+                    <div id="pendingSequences" class="stat-value dna-stat">0</div>
+                </div>
+                <div class="stat">
+                    <span>Processed</span>
+                    <div id="processedSequences" class="stat-value dna-stat">0</div>
+                </div>
+            </div>
+            <div id="dnaStatus" class="status"></div>
+        </div>
+
+        <!-- Time Portal Queue (Circular Queue) -->
+        <div class="queue-card">
+            <h2 class="title time-title">⌛ Temporal Nexus</h2>
+            <div class="scene-container">
+                <div class="circular-container">
+                    <div class="quantum-effect"></div>
+                    <div id="timeQueue"></div>
+                </div>
+            </div>
+            <div class="controls">
+                <button class="time-btn" onclick="addTraveler()">New Traveler</button>
+                <button class="time-btn" onclick="processTraveler()">Begin Jump</button>
+            </div>
+            <div class="stats">
+                <div class="stat">
+                    <span>Waiting</span>
+                    <div id="waitingTravelers" class="stat-value time-stat">0</div>
+                </div>
+                <div class="stat">
+                    <span>Jumped</span>
+                    <div id="jumpedTravelers" class="stat-value time-stat">0</div>
+                </div>
+            </div>
+            <div id="timeStatus" class="status"></div>
+        </div>
+    </div>
+
+    <script>
+        // Simple Queue implementation
+        class SimpleQueue {
+            constructor(maxSize = 5) {
+                this.items = [];
+                this.maxSize = maxSize;
+                this.processed = 0;
+            }
+
+            add(item) {
+                if (this.items.length >= this.maxSize) return false;
+                this.items.push(item);
+                return true;
+            }
+
+            process() {
+                if (this.items.length === 0) return null;
+                this.processed++;
+                return this.items.shift();
+            }
+
+            getCount() {
+                return this.items.length;
+            }
+
+            getProcessed() {
+                return this.processed;
+            }
+        }
+
+        // Circular Queue implementation
+        class CircularQueue {
+            constructor(maxSize = 8) {
+                this.maxSize = maxSize;
+                this.items = new Array(maxSize).fill(null);
+                this.front = 0;
+                this.rear = -1;
+                this.size = 0;
+                this.processed = 0;
+            }
+
+            add(item) {
+                if (this.size >= this.maxSize) return false;
+                
+                this.rear = (this.rear + 1) % this.maxSize;
+                this.items[this.rear] = item;
+                this.size++;
+                return true;
+            }
+
+            process() {
+                if (this.size === 0) return null;
+                
+                const item = this.items[this.front];
+                this.items[this.front] = null;
+                this.front = (this.front + 1) % this.maxSize;
+                this.size--;
+                this.processed++;
+                return item;
+            }
+
+            getOccupiedPositions() {
+                const positions = [];
+                let current = this.front;
+                for (let i = 0; i < this.size; i++) {
+                    positions.push(current);
+                    current = (current + 1) % this.maxSize;
+                }
+                return positions;
+            }
+
+            getCount() {
+                return this.size;
+            }
+
+            getProcessed() {
+                return this.processed;
+            }
+        }
+
+        const dnaQueue = new SimpleQueue();
+        const timeQueue = new CircularQueue();
+
+        function getCircularPosition(index, total, radius = 80) {
+            const angle = (index / total) * 2 * Math.PI;
+            return {
+                x: radius * Math.cos(angle) + 80,
+                y: radius * Math.sin(angle) + 80
+            };
+        }
+
+        function updateDNADisplay() {
+            const container = document.getElementById('dnaQueue');
+            container.innerHTML = '';
+            
+            dnaQueue.items.forEach((_, index) => {
+                const element = document.createElement('div');
+                element.className = 'queue-item dna-sequence';
+                element.textContent = '🧬';
+                element.style.top = `${50 + (index * 50)}px`;
+                container.appendChild(element);
+                
+                gsap.from(element, {
+                    x: -100,
+                    opacity: 0,
+                    duration: 0.5
+                });
+            });
+
+            document.getElementById('pendingSequences').textContent = dnaQueue.getCount();
+            document.getElementById('processedSequences').textContent = dnaQueue.getProcessed();
+        }
+
+        function updateTimeDisplay() {
+            const container = document.getElementById('timeQueue');
+            container.innerHTML = '';
+            
+            const positions = timeQueue.getOccupiedPositions();
+            positions.forEach((pos, index) => {
+                const { x, y } = getCircularPosition(pos, timeQueue.maxSize);
+                const element = document.createElement('div');
+                element.className = 'queue-item time-traveler';
+                element.textContent = '⌛';
+                element.style.transform = `translate(${x}px, ${y}px)`;
+                container.appendChild(element);
+                
+                gsap.from(element, {
+                    scale: 0,
+                    opacity: 0,
+                    duration: 0.5
+                });
+            });
+
+            document.getElementById('waitingTravelers').textContent = timeQueue.getCount();
+            document.getElementById('jumpedTravelers').textContent = timeQueue.getProcessed();
+        }
+
+        function addSequence() {
+            if (dnaQueue.add('sequence')) {
+                updateDNADisplay();
+                document.getElementById('dnaStatus').textContent = 'New DNA sequence added to queue';
+            } else {
+                document.getElementById('dnaStatus').textContent = 'Queue full! Lab capacity reached';
+            }
+        }
+
+        function processSequence() {
+            const sequence = dnaQueue.process();
+            if (sequence) {
+                const item = document.querySelector('.dna-sequence');
+                if (item) {
+                    gsap.to(item, {
+                        x: 300,
+                        opacity: 0,
+                        duration: 1,
+                        onComplete: updateDNADisplay
+                    });
+                }
+                document.getElementById('dnaStatus').textContent = 'Processing DNA sequence...';
+            } else {
+                document.getElementById('dnaStatus').textContent = 'No sequences in queue';
+            }
+        }
+
+        function addTraveler() {
+            if (timeQueue.add('traveler')) {
+                updateTimeDisplay();
+                document.getElementById('timeStatus').textContent = 'Temporal signature registered';
+            } else {
+                document.getElementById('timeStatus').textContent = 'Temporal buffer saturated!';
+            }
+        }
+
+        function processTraveler() {
+            const traveler = timeQueue.process();
+            if (traveler) {
+                updateTimeDisplay();
+                document.getElementById('timeStatus').textContent = 'Quantum tunneling in progress...';
+            } else {
+                document.getElementById('timeStatus').textContent = 'No travelers in temporal buffer';
+            }
+        }
+
+        // Initialize displays
+        updateDNADisplay();
+        updateTimeDisplay();
+    </script>
+</body>
+</html>
