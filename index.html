@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Structures Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1c1c1c, #121212);
+            color: #e0e0e0;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            padding: 3rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255,111,97,0.1) 0%, rgba(3,169,244,0.1) 100%);
+            z-index: 0;
+        }
+
+        h1 {
+            font-size: 3.5em;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ff6f61, #03a9f4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 1.2em;
+            margin-bottom: 3rem;
+        }
+
+        .menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 1rem;
+        }
+
+        .menu-item {
+            background: rgba(33, 33, 33, 0.9);
+            border: 2px solid transparent;
+            padding: 2rem;
+            border-radius: 15px;
+            text-decoration: none;
+            color: #e0e0e0;
+            transition: all 0.4s ease;
+            position: relative;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-item:hover {
+            transform: translateY(-5px);
+            border-color: #ff6f61;
+            box-shadow: 0 15px 40px rgba(255, 111, 97, 0.2);
+        }
+
+        .menu-item-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .menu-item-header i {
+            font-size: 2em;
+            color: #ff6f61;
+        }
+
+        .menu-item-title {
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+
+        .submenu {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .submenu-item {
+            background: rgba(51, 51, 51, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #e0e0e0;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .submenu-item:hover {
+            background: #03a9f4;
+            color: #fff;
+            transform: translateX(10px);
+        }
+
+        .submenu-item i {
+            font-size: 1.2em;
+        }
+
+        .card-description {
+            color: #888;
+            margin-bottom: 1.5rem;
+            font-size: 0.9em;
+        }
+
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 111, 97, 0.1);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-particles">
+        <div class="particle" style="left: 10%; width: 20px; height: 20px; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 30%; width: 15px; height: 15px; animation-delay: 2s;"></div>
+        <div class="particle" style="left: 50%; width: 25px; height: 25px; animation-delay: 4s;"></div>
+        <div class="particle" style="left: 70%; width: 18px; height: 18px; animation-delay: 6s;"></div>
+        <div class="particle" style="left: 90%; width: 22px; height: 22px; animation-delay: 8s;"></div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Data Structures Hub</h1>
+            <p class="subtitle">Master the fundamentals of computer science with our comprehensive guide</p>
+        </div>
+        <div class="menu">
+            <div class="menu-item">
+                <div class="menu-item-header">
+                    <i class="fas fa-stream"></i>
+                    <div class="menu-item-title">Linear Data Structures</div>
+                </div>
+                <p class="card-description">
+                    Explore sequential data organizations where elements are stored in a linear order.
+                </p>
+                <div class="submenu">
+                    <a href="stacks.html" class="submenu-item">
+                        <i class="fas fa-layer-group"></i>
+                        Stacks
+                    </a>
+                    <a href="queues.html" class="submenu-item">
+                        <i class="fas fa-people-arrows"></i>
+                        Queues
+                    </a>
+                    <a href="linkedlist.html" class="submenu-item">
+                        <i class="fas fa-link"></i>
+                        Linked List
+                    </a>
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <div class="menu-item-header">
+                    <i class="fas fa-project-diagram"></i>
+                    <div class="menu-item-title">Non-Linear Data Structures</div>
+                </div>
+                <p class="card-description">
+                    Discover hierarchical and networked data organizations for complex relationships.
+                </p>
+                <div class="submenu">
+                    <a href="trees.html" class="submenu-item">
+                        <i class="fas fa-tree"></i>
+                        Trees
+                    </a>
+                  
+                </div>
+            </div>
+        </div>
+    </div>
